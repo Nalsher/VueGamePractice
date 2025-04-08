@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, ref } from "vue";
 import HumanComponent from "@/components/Human/HumanComponent.vue";
+import {Human} from "@/components/Human/Human.js";
 
 const imageRef = ref(null);
 
@@ -11,7 +12,34 @@ const imageInfo = ref({
   height: 0,
 });
 
-const emit = defineEmits();
+const resolution = ref({
+  leftBorder: 0,
+  bottomBorder: 0,
+  rightBorder: 0,
+  topBorder: 0,
+});
+
+const setResolution = (Info) => {
+  resolution.rightBorder = Info.width + Info.x - 50;
+  resolution.leftBorder = Info.x;
+  resolution.topBorder = Info.y;
+  resolution.bottomBorder = Info.height + 50;
+}
+
+const setHumanCoords = () => {
+  Human.value.positionX =
+      resolution.bottomBorder +
+      (resolution.topBorder - resolution.bottomBorder) / 2;
+
+  Human.value.positionY =
+      resolution.leftBorder +
+      (resolution.rightBorder - resolution.leftBorder) / 2;
+
+  Human.value.rightBorder = resolution.rightBorder;
+  Human.value.leftBorder = resolution.leftBorder;
+  Human.value.bottomBorder = resolution.bottomBorder;
+  Human.value.topBorder = resolution.topBorder;
+};
 
 onMounted(() => {
   if (imageInfo.value) {
@@ -22,7 +50,8 @@ onMounted(() => {
       width: rect.width,
       height: rect.height,
     };
-    emit("imageInfo", imageInfo.value);
+    setResolution(imageInfo.value);
+    setHumanCoords();
   }
 });
 </script>
@@ -30,7 +59,7 @@ onMounted(() => {
 <template>
   <HumanComponent />
 
-  <div class="container" ref="imageRef"></div>
+  <div class="container" ref="imageRef"><img src="/src/assets/images.jpeg" class="container"></div>
 </template>
 
 <style>
@@ -43,6 +72,5 @@ onMounted(() => {
   height: 720px;
   align-items: center;
   justify-content: center;
-  background-image: url("src/assets/images.jpeg");
 }
 </style>

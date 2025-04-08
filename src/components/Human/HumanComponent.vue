@@ -1,12 +1,31 @@
 <script setup>
-import { Human, moveSprite } from "@/components/Human/Human.js";
-import { onMounted } from "vue";
+import { Human, moveBottom, moveLeft, moveRight, moveTop } from "@/components/Human/Human.js";
+import {onMounted, ref} from "vue";
+import {HumanDictMoveTypes} from "./HumanMoveTypes";
+
+const keysPressed = ref({})
+
+document.addEventListener("keydown", (e) => {
+  keysPressed.value[e.key] = true;
+})
+
+document.addEventListener("keyup", (e) => {
+  delete keysPressed.value[e.key];
+})
+
+function moveSprite() {
+  if (keysPressed.value[HumanDictMoveTypes.moveUpKey]) moveTop();
+  if (keysPressed.value[HumanDictMoveTypes.moveDownKey]) moveBottom();
+  if (keysPressed.value[HumanDictMoveTypes.moveLeftKey]) moveLeft();
+  if (keysPressed.value[HumanDictMoveTypes.moveRightKey]) moveRight();
+  console.log(Human.value.lastRotate);
+  requestAnimationFrame(moveSprite);
+}
 
 onMounted(() => {
-  window.addEventListener("keydown", moveSprite);
-});
+  requestAnimationFrame(moveSprite);
+})
 
-const emit = defineEmits();
 </script>
 
 <template>
